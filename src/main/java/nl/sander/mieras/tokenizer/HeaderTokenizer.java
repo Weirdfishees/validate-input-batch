@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class HeaderTokenizer extends DelimitedLineTokenizer implements LineCallbackHandler {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HeaderTokenizer.class);
-	
+		
 	private String delimiter = ",";
 	private String[] names;	
 
@@ -26,9 +26,9 @@ public class HeaderTokenizer extends DelimitedLineTokenizer implements LineCallb
 	protected List<String> doTokenize(String line) {
 		setNames(this.names);
 		return super.doTokenize(line);
-	}
+	}	
 	
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
-	}	
+	}
 }

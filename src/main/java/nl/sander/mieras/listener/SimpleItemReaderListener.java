@@ -9,14 +9,14 @@ import org.springframework.batch.core.ItemReadListener;
 public class SimpleItemReaderListener<Item> implements ItemReadListener<Item>{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleItemReaderListener.class);
-	private static final double NANO_TO_SECOND = 1_000_000_000.0;	
-	private static final String PATTERN = ",###";
+	private static final double NANO_TO_SECOND_DIVIDER_NUMBER = 1_000_000_000.0;	
+	private static final String PATTERN = ",###";	
 	
 	private int startCount = 0;
 	private int logInterval = 1000;
 	private int currentCount;
 	private int totalCount;
-	private static long timeElapsed;
+	private long timeElapsed;
 	private long startTime;
 	private DecimalFormat decimalFormat = new DecimalFormat(PATTERN);	
 
@@ -45,7 +45,7 @@ public class SimpleItemReaderListener<Item> implements ItemReadListener<Item>{
 		LOG.info(String.format("Read records [%s] to [%s] in average %.2f seconds", 
 				decimalFormat.format(startCount), 
 				decimalFormat.format(totalCount), 
-				timeElapsed / NANO_TO_SECOND));		
+				timeElapsed / NANO_TO_SECOND_DIVIDER_NUMBER));		
 	}
 	
 	private void updateStartCount() {
@@ -64,7 +64,7 @@ public class SimpleItemReaderListener<Item> implements ItemReadListener<Item>{
 
 	@Override
 	public void onReadError(Exception arg0) {
-				
+		// NO-OP	
 	}
 	
 	public void setLogInterval(int logInterval){
