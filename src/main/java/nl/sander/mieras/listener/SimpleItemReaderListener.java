@@ -9,7 +9,6 @@ import org.springframework.batch.core.ItemReadListener;
 public class SimpleItemReaderListener<Item> implements ItemReadListener<Item>{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleItemReaderListener.class);
-	private static final int GROUP_SIZE = 3;
 	private static final double NANO_TO_SECOND = 1_000_000_000.0;	
 	private static final String PATTERN = ",###";
 	
@@ -17,28 +16,50 @@ public class SimpleItemReaderListener<Item> implements ItemReadListener<Item>{
 	private int logInterval = 1000;
 	private int currentCount;
 	private int totalCount;
-	private long timeElapsed;
+	private static long timeElapsed;
 	private long startTime;
-	private DecimalFormat decimalFormat = new DecimalFormat(PATTERN);
-
-	@Override
-	public void afterRead(Item item) {
-		decimalFormat.setGroupingSize(GROUP_SIZE);
-		timeElapsed += System.nanoTime() - startTime;		
-		if (currentCount == logInterval) {			
-			LOG.info(String.format("Read records [ %s ] to [ %s ] in average %.2f seconds", decimalFormat.format(startCount), decimalFormat.format(totalCount), timeElapsed / NANO_TO_SECOND));
-			startCount += currentCount;
-			currentCount = 0;
-			timeElapsed = 0;
-		} else {
-			currentCount++;
-			totalCount++;
-		}		
-	}
+	private DecimalFormat decimalFormat = new DecimalFormat(PATTERN);	
 
 	@Override
 	public void beforeRead() {
 		startTime = System.nanoTime();				
+	}
+
+	@Override
+	public void afterRead(Item item) {
+		updateTimeElapsed();		
+		if (currentCount == logInterval) {			
+			displayMessage();
+			updateStartCount();
+			resetCount();
+		} else {
+			increaseCount();
+		}		
+	}
+
+	private void updateTimeElapsed() {
+		timeElapsed += System.nanoTime() - startTime;
+	}
+
+	private void displayMessage() {
+		LOG.info(String.format("Read records [%s] to [%s] in average %.2f seconds", 
+				decimalFormat.format(startCount), 
+				decimalFormat.format(totalCount), 
+				timeElapsed / NANO_TO_SECOND));		
+	}
+	
+	private void updateStartCount() {
+		startCount += currentCount;
+	}
+	
+	private void resetCount() {
+		currentCount = 0;
+		timeElapsed = 0;
+	}
+	
+	private void increaseCount() {
+		currentCount++;
+		totalCount++;
 	}
 
 	@Override

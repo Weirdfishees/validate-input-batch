@@ -59,7 +59,7 @@ public class BatchConfiguration {
 	public SimpleItemReaderListener listener(){
 		SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
 		//optional setting, custom logging is set to 1000, increase for less verbose logging
-		listener.setLogInterval(100000);
+		listener.setLogInterval(50000);
 		return listener;
 	}
 	
