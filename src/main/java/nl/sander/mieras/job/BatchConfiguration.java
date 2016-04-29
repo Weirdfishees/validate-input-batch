@@ -58,7 +58,7 @@ public class BatchConfiguration {
 	@Bean
 	public SimpleItemReaderListener listener(){
 		SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
-		//optional setting, custom logging is set to 1000
+		//optional setting, custom logging is set to 1000, increase for less verbose logging
 		listener.setLogInterval(2500);
 		return listener;
 	}
