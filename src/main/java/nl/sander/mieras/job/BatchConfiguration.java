@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import nl.sander.mieras.listener.SimpleItemReaderListener;
 import nl.sander.mieras.tokenizer.HeaderTokenizer;
 import nl.sander.mieras.writer.DummyItemWriter;
 
@@ -38,7 +39,8 @@ public class BatchConfiguration {
 	@Bean
 	public Step validateInput() {
 	    return stepBuilderFactory.get("validateInput")
-	            .chunk(1000)
+	            .chunk(10000)
+	            .listener(listener())
 	            .reader(reader())	            
 	            .writer(writer())
 	            .build();
@@ -47,14 +49,24 @@ public class BatchConfiguration {
 	@Bean 
 	public HeaderTokenizer tokenizeHeader(){
 		HeaderTokenizer tokenizer = new HeaderTokenizer();
-		tokenizer.setDelimiter(",");
+		//optional setting, custom delimiter is set to ','
+		//tokenizer.setDelimiter(",");
 		return tokenizer;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Bean
+	public SimpleItemReaderListener listener(){
+		SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
+		//optional setting, custom logging is set to 1000
+		listener.setLogInterval(2500);
+		return listener;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean	
     public FlatFileItemReader reader() {
-        FlatFileItemReader reader = new FlatFileItemReader(); 
+        FlatFileItemReader reader = new FlatFileItemReader();        
         reader.setLinesToSkip(1);        
         reader.setSkippedLinesCallback(tokenizeHeader());
         reader.setResource(new ClassPathResource("Master.csv"));

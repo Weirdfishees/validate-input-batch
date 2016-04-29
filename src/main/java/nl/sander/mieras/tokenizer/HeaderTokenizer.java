@@ -13,7 +13,7 @@ public class HeaderTokenizer extends DelimitedLineTokenizer implements LineCallb
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HeaderTokenizer.class);
 	
-	private String delimiter;
+	private String delimiter = ",";
 	private String[] names;	
 
 	@Override
