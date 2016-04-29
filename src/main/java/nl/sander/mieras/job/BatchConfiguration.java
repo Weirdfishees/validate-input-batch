@@ -39,7 +39,7 @@ public class BatchConfiguration {
 	@Bean
 	public Step validateInput() {
 	    return stepBuilderFactory.get("validateInput")
-	            .chunk(10000)
+	            .chunk(100000)
 	            .listener(listener())
 	            .reader(reader())	            
 	            .writer(writer())
@@ -59,7 +59,7 @@ public class BatchConfiguration {
 	public SimpleItemReaderListener listener(){
 		SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
 		//optional setting, custom logging is set to 1000, increase for less verbose logging
-		listener.setLogInterval(2500);
+		listener.setLogInterval(100000);
 		return listener;
 	}
 	
@@ -69,7 +69,7 @@ public class BatchConfiguration {
         FlatFileItemReader reader = new FlatFileItemReader();        
         reader.setLinesToSkip(1);        
         reader.setSkippedLinesCallback(tokenizeHeader());
-        reader.setResource(new ClassPathResource("Master.csv"));
+        reader.setResource(new ClassPathResource("majestic_million.csv"));
         reader.setLineMapper(new DefaultLineMapper() {{
             setLineTokenizer(tokenizeHeader());
             setFieldSetMapper(new PassThroughFieldSetMapper());
