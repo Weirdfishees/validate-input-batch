@@ -1,18 +1,38 @@
 package nl.sander.mieras.domain;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class Person {
 	
+	@NotNull
+    @Pattern(regexp="[a-zA-Z]+")
 	private String first_name;
+	
 	private String last_name;
+	
 	private String company_name;
+	
 	private String address;
+	
 	private String city;
+	
 	private String county;
+	
 	private String state;
+	
+	@NotNull
+    @Size(min=5,max=5)
+    @Pattern(regexp="\\d{5}")
 	private String zip;
+	
 	private String phone1;
+	
 	private String phone2;
+	
 	private String email;
+	
 	private String web;
 	
 	public String getFirst_name() {

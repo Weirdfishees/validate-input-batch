@@ -8,6 +8,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper;
+import org.springframework.batch.item.validator.ValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,7 +76,13 @@ public class BatchConfiguration {
             setFieldSetMapper(new PassThroughFieldSetMapper());
         }});
         return reader;
-    }    
+    }
+	
+	@Bean
+	public ValidatingItemProcessor processor(){
+		ValidatingItemProcessor processor = new ValidatingItemProcessor<>();
+		return processor;
+	}
     
     @Bean
     public DummyItemWriter writer(){
