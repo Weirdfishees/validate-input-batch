@@ -11,14 +11,13 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
-import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
+import nl.sander.mieras.aggregator.HeaderAggregator;
 import nl.sander.mieras.domain.Person;
 import nl.sander.mieras.listener.SimpleItemReaderListener;
 import nl.sander.mieras.processor.PassThroughValidatingItemProcessor;
@@ -85,7 +84,7 @@ public class BatchConfiguration {
 	public FlatFileItemWriter writer(){
 		FlatFileItemWriter writer = new FlatFileItemWriter();
 		writer.setResource(new FileSystemResource(new File("target/invalidRecord.csv")));
-		writer.setLineAggregator(tokenizeHeader());		
+		writer.setLineAggregator(aggregateHeader());		
 		return writer;
 	}    
     
@@ -103,6 +102,13 @@ public class BatchConfiguration {
     	//tokenizer.setDelimiter(",");
     	tokenizer.setInputResource(getInputFile());
     	return tokenizer;
+    }
+    
+    @Bean
+    public HeaderAggregator aggregateHeader(){
+    	HeaderAggregator aggregator = new HeaderAggregator();
+    	aggregator.setHeaderTokenizer(tokenizeHeader());
+    	return aggregator;
     }
     
     @Bean
