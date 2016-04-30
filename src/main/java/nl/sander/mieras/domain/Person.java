@@ -47,8 +47,17 @@ public class Person {
 	@Pattern(regexp="^(?:(?:[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+(?:(?:\\.(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)*\"|[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+))*\\.[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+)?)|(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)+\"))@(?:[a-zA-Z\\d\\-]+(?:\\.[a-zA-Z\\d\\-]+)*|\\[\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\])$", message = "Email has invalid characters")
 	private String email;
 	
-	private String web;
+	private String web;	
 	
+	@Override
+	public String toString() {
+		return "first_name=" + first_name + ", last_name=" + last_name
+				+ ", company_name=" + company_name + ", address=" + address + ", city="
+				+ city + ", county=" + county + ", state=" + state + ", zip=" + zip
+				+ ", phone1=" + phone1 + ", phone2=" + phone2 + ", email=" + email
+				+ ", web=" + web + "]";
+	}
+
 	public String getFirst_name() {
 		return first_name;
 	}

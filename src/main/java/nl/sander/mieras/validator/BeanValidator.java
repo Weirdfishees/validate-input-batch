@@ -10,9 +10,13 @@ import org.springframework.batch.item.validator.ValidationException;
 import org.springframework.batch.item.validator.Validator;
 import org.springframework.beans.factory.InitializingBean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("rawtypes")
 public class BeanValidator implements Validator, InitializingBean {
     
+	private static final Logger LOG = LoggerFactory.getLogger(BeanValidator.class);
     private javax.validation.Validator validator;
 
     public void afterPropertiesSet() throws Exception {
@@ -25,17 +29,15 @@ public class BeanValidator implements Validator, InitializingBean {
         Set<ConstraintViolation<Object>> constraintViolations = validator.validate(target);
         
         if(constraintViolations.size() > 0) {
-            buildValidationException(constraintViolations);
+            logInvalidRecord(constraintViolations, target);
         }
-    }
+    }    
 
-    private void buildValidationException(Set<ConstraintViolation<Object>> constraintViolations) {
-        StringBuilder message = new StringBuilder();
-        
+    private void logInvalidRecord(Set<ConstraintViolation<Object>> constraintViolations, Object invalidRecord) {    	
+    	StringBuilder constraintMessage = new StringBuilder();        
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-            message.append(constraintViolation.getMessage() + "\n");
+            constraintMessage.append(constraintViolation.getMessage());
         }
-
-        throw new ValidationException(message.toString());
+        LOG.info(String.format("The following record did not pass validation because column %s: \n %s", constraintMessage.toString(),invalidRecord.toString()));        
     }
 }
