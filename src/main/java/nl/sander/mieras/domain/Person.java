@@ -4,14 +4,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class Person {
+import nl.sander.mieras.regex.USRegexPatterns;
+
+public class Person extends USRegexPatterns{
 	
 	@NotNull(message = "First name may not be null")
-    @Pattern(regexp="[a-zA-Z]+", message = "First name has invalid characters")
+    @Pattern(regexp=ALPHABET_UPPER_LOWERCASE, message = "First name has invalid characters")
 	private String first_name;
 	
 	@NotNull(message = "Last name may not be null")
-	@Pattern(regexp="[a-zA-Z]+", message = "Last name has invalid characters")
+	@Pattern(regexp=ALPHABET_UPPER_LOWERCASE, message = "Last name has invalid characters")
 	private String last_name;
 	
 	@NotNull(message = "Company name may not be null")
@@ -21,32 +23,34 @@ public class Person {
 	private String address;
 	
 	@NotNull(message = "City name may not be null")
-	@Pattern(regexp="[a-zA-Z\\. ]+", message = "City has invalid characters")
+	@Pattern(regexp=VALID_CITY, message = "City has invalid characters")
 	private String city;
 	
 	private String county;
 	
 	@NotNull(message = "Sate name may not be null")
 	@Size(min=2,max=2, message = "State does not contain minimum 2 characters and maximum 2 characters")
-	@Pattern(regexp="[A-Z]{2}", message = "State has invalid characters")
+	@Pattern(regexp=VALID_US_STATES, message = "State has invalid characters")
 	private String state;
 	
 	@NotNull(message = "Zip name may not be null")
     @Size(min=5,max=5, message = "Zip does not contain minimum 5 characters and maximum 5 characters")
-    @Pattern(regexp="\\d{5}")
+    @Pattern(regexp=VALID_US_ZIP)
 	private String zip;
 	
 	@NotNull(message = "Phone1 name may not be null")
-	@Pattern(regexp="(?:\\d{1}\\s)?\\(?(\\d{3})\\)?-?\\s?(\\d{3})-?\\s?(\\d{4})", message = "Phone1 has invalid characters")
+	@Pattern(regexp=VALID_US_PHONENUMBER, message = "Phone1 has invalid characters")
 	private String phone1;	
 	
-	@Pattern(regexp="(?:\\d{1}\\s)?\\(?(\\d{3})\\)?-?\\s?(\\d{3})-?\\s?(\\d{4})", message = "Phone2 has invalid characters")
+	@Pattern(regexp=VALID_US_PHONENUMBER, message = "Phone2 has invalid characters")
 	private String phone2;
 		
 	@NotNull(message = "Email name may not be null")
-	@Pattern(regexp="^(?:(?:[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+(?:(?:\\.(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)*\"|[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+))*\\.[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+)?)|(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)+\"))@(?:[a-zA-Z\\d\\-]+(?:\\.[a-zA-Z\\d\\-]+)*|\\[\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\])$", message = "Email has invalid characters")
+	@Pattern(regexp=VALID_EMAIL, message = "Email has invalid characters")
 	private String email;
 	
+	@NotNull(message = "Web name may not be null")
+	@Pattern(regexp=VALID_URL, message = "Web has invalid characters")
 	private String web;	
 	
 	@Override

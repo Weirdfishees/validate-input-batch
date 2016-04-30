@@ -40,9 +40,9 @@ public class BeanValidator implements PassThroughValidator, InitializingBean {
     private void logInvalidRecord(Set<ConstraintViolation<Object>> constraintViolations) {    	
     	StringBuilder constraintMessage = new StringBuilder();        
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-            constraintMessage.append(constraintViolation.getMessage());
+            constraintMessage.append(constraintViolation.getMessage() + ", ");
         }
-        LOG.info(String.format("The following record did not pass validation because column %s: \n %s", constraintMessage.toString(),record.toString()));        
+        LOG.info(String.format("The following record did not pass validation because %s: \n %s", constraintMessage.toString(),record.toString()));        
     }
 
 	@Override

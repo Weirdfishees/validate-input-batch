@@ -3,7 +3,8 @@ package nl.sander.mieras.regex;
 
 public enum Regex {
 	
-	ALPHABET_UPPER_LOWERCASE("[a-zA-Z]+");
+	ALPHABET_UPPER_LOWERCASE("[a-zA-Z]+"),
+	DIGITS_ONLY("^\\d+");
 	
 	private String RegexAsString;
 	
@@ -15,5 +16,4 @@ public enum Regex {
 	public String toString() {		
 		return this.RegexAsString;
 	}
-
 }
