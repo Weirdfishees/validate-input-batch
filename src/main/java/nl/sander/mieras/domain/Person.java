@@ -6,31 +6,45 @@ import javax.validation.constraints.Size;
 
 public class Person {
 	
-	@NotNull
-    @Pattern(regexp="[a-zA-Z]+")
+	@NotNull(message = "First name may not be null")
+    @Pattern(regexp="[a-zA-Z]+", message = "First name has invalid characters")
 	private String first_name;
 	
+	@NotNull(message = "Last name may not be null")
+	@Pattern(regexp="[a-zA-Z]+", message = "Last name has invalid characters")
 	private String last_name;
 	
+	@NotNull	(message = "Company name may not be null")
 	private String company_name;
 	
+	@NotNull(message = "Address name may not be null")	
 	private String address;
 	
+	@NotNull(message = "City name may not be null")
+	@Pattern(regexp="[a-zA-Z\\. ]+", message = "City has invalid characters")
 	private String city;
 	
 	private String county;
 	
+	@NotNull(message = "Sate name may not be null")
+	@Size(min=2,max=2, message = "State does not contain minimum 2 characters and maximum 2 characters")
+	@Pattern(regexp="[A-Z]{2}", message = "State has invalid characters")
 	private String state;
 	
-	@NotNull
-    @Size(min=5,max=5)
+	@NotNull(message = "Zip name may not be null")
+    @Size(min=5,max=5, message = "Zip does not contain minimum 5 characters and maximum 5 characters")
     @Pattern(regexp="\\d{5}")
 	private String zip;
 	
-	private String phone1;
+	@NotNull(message = "Phone1 name may not be null")
+	@Pattern(regexp="(?:\\d{1}\\s)?\\(?(\\d{3})\\)?-?\\s?(\\d{3})-?\\s?(\\d{4})", message = "Phone1 has invalid characters")
+	private String phone1;	
 	
+	@Pattern(regexp="(?:\\d{1}\\s)?\\(?(\\d{3})\\)?-?\\s?(\\d{3})-?\\s?(\\d{4})", message = "Phone2 has invalid characters")
 	private String phone2;
-	
+		
+	@NotNull(message = "Email name may not be null")
+	@Pattern(regexp="^(?:(?:[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+(?:(?:\\.(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)*\"|[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+))*\\.[\\w`~!#$%^&*\\-=+;:{}'|,?\\/]+)?)|(?:\"(?:\\\\?[\\w`~!#$%^&*\\-=+;:{}'|,?\\/\\.()<>\\[\\] @]|\\\\\"|\\\\\\\\)+\"))@(?:[a-zA-Z\\d\\-]+(?:\\.[a-zA-Z\\d\\-]+)*|\\[\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\])$", message = "Email has invalid characters")
 	private String email;
 	
 	private String web;
