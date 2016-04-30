@@ -28,7 +28,7 @@ public class Person extends USRegexPatterns{
 	
 	private String county;
 	
-	@NotNull(message = "Sate name may not be null")
+	@NotNull(message = "State name may not be null")
 	@Size(min=2,max=2, message = "State does not contain minimum 2 characters and maximum 2 characters")
 	@Pattern(regexp=VALID_US_STATES, message = "State has invalid characters")
 	private String state;
