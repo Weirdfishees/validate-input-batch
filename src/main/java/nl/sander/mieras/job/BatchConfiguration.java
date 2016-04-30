@@ -19,7 +19,8 @@ import org.springframework.core.io.FileSystemResource;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
 import nl.sander.mieras.domain.Ranking;
-import nl.sander.mieras.listener.SimpleItemReaderListener;
+import nl.sander.mieras.listener.ConcreteItemProcessorListener;
+import nl.sander.mieras.listener.ConcreteItemReaderListener;
 import nl.sander.mieras.listener.InvalidItemStepExecutionListener;
 import nl.sander.mieras.processor.PassThroughValidatingItemProcessor;
 import nl.sander.mieras.tokenizer.HeaderTokenizer;
@@ -27,7 +28,9 @@ import nl.sander.mieras.validator.BeanValidator;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfiguration {	
+public class BatchConfiguration {
+	
+	private static final String TARGET_FILE = "target/invalidRecord.csv";
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -51,6 +54,7 @@ public class BatchConfiguration {
 	            .reader(reader())	            
 	            .listener(readerListener())
 	            .processor(processor())
+	            .listener(processorListener())
 	            .writer(writer())
 	            .listener(invalidItemListener())
 	            .build();
@@ -85,16 +89,15 @@ public class BatchConfiguration {
 	@Bean
 	public FlatFileItemWriter writer(){
 		FlatFileItemWriter writer = new FlatFileItemWriter();
-		writer.setResource(new FileSystemResource(new File("target/invalidRecord.csv")));
+		writer.setResource(new FileSystemResource(new File(TARGET_FILE)));
 		writer.setLineAggregator(aggregateHeader());		
 		return writer;
 	}    
     
-    // Support Beans
+    // Support Beans	
 	@Bean
 	public ClassPathResource getInputFile(){
-		ClassPathResource resource = new ClassPathResource("rankings.csv");
-		return resource;
+		return new ClassPathResource("rankings.csv");		
 	}
 	
     @Bean 
@@ -119,12 +122,19 @@ public class BatchConfiguration {
     	//optional setting, logging is disable by standard
     	//validator.setEnableLogging(true);
     	return validator;
+    }    
+    
+    @Bean
+    public ConcreteItemReaderListener readerListener(){
+    	ConcreteItemReaderListener listener = new ConcreteItemReaderListener();
+    	//optional setting, custom logging is set to 1000, increase for less verbose logging
+    	listener.setLogInterval(100000);
+    	return listener;
     }
     
-    @SuppressWarnings("rawtypes")
     @Bean
-    public SimpleItemReaderListener readerListener(){
-    	SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
+    public ConcreteItemProcessorListener processorListener(){
+    	ConcreteItemProcessorListener listener = new ConcreteItemProcessorListener();
     	//optional setting, custom logging is set to 1000, increase for less verbose logging
     	listener.setLogInterval(100000);
     	return listener;
@@ -132,7 +142,6 @@ public class BatchConfiguration {
     
     @Bean
     public InvalidItemStepExecutionListener invalidItemListener(){
-    	InvalidItemStepExecutionListener listener = new InvalidItemStepExecutionListener();
-    	return listener;
+    	return new InvalidItemStepExecutionListener();    	
     }
 }
