@@ -14,7 +14,7 @@ public class Person {
 	@Pattern(regexp="[a-zA-Z]+", message = "Last name has invalid characters")
 	private String last_name;
 	
-	@NotNull	(message = "Company name may not be null")
+	@NotNull(message = "Company name may not be null")
 	private String company_name;
 	
 	@NotNull(message = "Address name may not be null")	

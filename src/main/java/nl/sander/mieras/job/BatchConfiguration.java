@@ -1,24 +1,29 @@
 package nl.sander.mieras.job;
 
+import java.io.File;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.validator.ValidatingItemProcessor;
+import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
+import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 import nl.sander.mieras.domain.Person;
 import nl.sander.mieras.listener.SimpleItemReaderListener;
+import nl.sander.mieras.processor.PassThroughValidatingItemProcessor;
 import nl.sander.mieras.tokenizer.HeaderTokenizer;
 import nl.sander.mieras.validator.BeanValidator;
-import nl.sander.mieras.writer.DummyItemWriter;
 
 @Configuration
 @EnableBatchProcessing
@@ -57,7 +62,7 @@ public class BatchConfiguration {
         FlatFileItemReader reader = new FlatFileItemReader();        
         reader.setLinesToSkip(1);        
         reader.setSkippedLinesCallback(tokenizeHeader());
-        reader.setResource(new ClassPathResource("us-500.csv"));
+        reader.setResource(getInputFile());
         reader.setLineMapper(new DefaultLineMapper() {{
             setLineTokenizer(tokenizeHeader());
             setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
@@ -65,28 +70,38 @@ public class BatchConfiguration {
             }});
         }});       
         return reader;
-    }
+    }	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
-	public ValidatingItemProcessor processor(){
-		ValidatingItemProcessor processor = new ValidatingItemProcessor<>();
+	public PassThroughValidatingItemProcessor processor(){
+		PassThroughValidatingItemProcessor processor = new PassThroughValidatingItemProcessor<>();
 		processor.setValidator(validator());
 		return processor;
 	}
     
-    @Bean
-    public DummyItemWriter writer(){
-    	DummyItemWriter writer = new DummyItemWriter();
-    	return writer;
-    }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Bean
+	public FlatFileItemWriter writer(){
+		FlatFileItemWriter writer = new FlatFileItemWriter();
+		writer.setResource(new FileSystemResource(new File("target/invalidRecord.csv")));
+		writer.setLineAggregator(tokenizeHeader());		
+		return writer;
+	}    
     
-    // Support Beans	
+    // Support Beans
+	@Bean
+	public ClassPathResource getInputFile(){
+		ClassPathResource resource = new ClassPathResource("us-500.csv");
+		return resource;
+	}
+	
     @Bean 
     public HeaderTokenizer tokenizeHeader(){
     	HeaderTokenizer tokenizer = new HeaderTokenizer();
     	//optional setting, custom delimiter is set to ','
     	//tokenizer.setDelimiter(",");
+    	tokenizer.setInputResource(getInputFile());
     	return tokenizer;
     }
     
