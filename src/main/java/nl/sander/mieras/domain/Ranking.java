@@ -25,7 +25,7 @@ public class Ranking extends GeneralRegexPatterns {
 	private String IDN_Domain;
 	private String IDN_TLD;
 	
-	// Explicity assuming that the column can only contain digits
+	// Explicity assuming that the column can only contain positive digits, however the column contains alot of negative digits!
 	@NotNull(message = "PrevGlobalRank may not be null")
 	@Pattern(regexp=DIGITS_ONLY, message = "PrevGlobalRank has invalid characters")
 	private String PrevGlobalRank;

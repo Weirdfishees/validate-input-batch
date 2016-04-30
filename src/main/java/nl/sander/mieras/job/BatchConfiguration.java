@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourceArrayPropertyEditor;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
+import nl.sander.mieras.domain.Person;
 import nl.sander.mieras.domain.Ranking;
 import nl.sander.mieras.listener.ConcreteItemProcessorListener;
 import nl.sander.mieras.listener.ConcreteItemReaderListener;
@@ -51,7 +55,7 @@ public class BatchConfiguration {
 	public Step validateInput() {
 	    return stepBuilderFactory.get("validateInput")
 	            .chunk(100_000)	           
-	            .reader(reader())	            
+	            .reader(rankingReader())	            
 	            .listener(readerListener())
 	            .processor(processor())
 	            .listener(processorListener())
@@ -61,9 +65,18 @@ public class BatchConfiguration {
 	}
 	
 	// Reader - Processor - Writer
+	/*@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Bean
+	public MultiResourceItemReader multiReader(){
+		MultiResourceItemReader reader = new MultiResourceItemReader();
+		reader.setResources(getResources("src/main/resources"));
+		reader.setDelegate(rankingReader());
+		return reader;
+	}*/
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean	
-    public FlatFileItemReader reader() {
+    public FlatFileItemReader rankingReader() {
         FlatFileItemReader reader = new FlatFileItemReader();        
         reader.setLinesToSkip(1);        
         reader.setSkippedLinesCallback(tokenizeHeader());
@@ -76,6 +89,22 @@ public class BatchConfiguration {
         }});       
         return reader;
     }	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Bean	
+	public FlatFileItemReader personReader() {
+		FlatFileItemReader reader = new FlatFileItemReader();        
+		reader.setLinesToSkip(1);        
+		reader.setSkippedLinesCallback(tokenizeHeader());
+		reader.setResource(getInputFile());
+		reader.setLineMapper(new DefaultLineMapper() {{
+			setLineTokenizer(tokenizeHeader());
+			setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
+				setTargetType(Person.class);
+			}});
+		}});       
+		return reader;
+	}	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
@@ -94,7 +123,15 @@ public class BatchConfiguration {
 		return writer;
 	}    
     
-    // Support Beans	
+    // Support Beans
+	/*@Bean
+	public Resource[] getResources(String stagingDirectory) {
+		ResourceArrayPropertyEditor resourceLoader = new ResourceArrayPropertyEditor();
+		resourceLoader.setAsText("file:" + stagingDirectory + "/*.csv");
+		Resource[] resources = (Resource[]) resourceLoader.getValue();
+		return resources;
+	}*/
+	
 	@Bean
 	public ClassPathResource getInputFile(){
 		return new ClassPathResource("rankings.csv");		
