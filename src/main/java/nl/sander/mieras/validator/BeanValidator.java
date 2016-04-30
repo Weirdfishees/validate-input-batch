@@ -17,8 +17,10 @@ public class BeanValidator implements PassThroughValidator, InitializingBean {
     
 	private static final Logger LOG = LoggerFactory.getLogger(BeanValidator.class);
     private javax.validation.Validator validator;
+    Set<ConstraintViolation<Object>> constraintViolations;
     private Object record;
     private boolean isInvalidRecord;
+    private boolean enableLogging = false;
 
     public void afterPropertiesSet() throws Exception {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -29,15 +31,21 @@ public class BeanValidator implements PassThroughValidator, InitializingBean {
     public void validate(Object target) throws ValidationException {
         this.record = target;
         this.isInvalidRecord = false;
-        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(target);
+        constraintViolations = validator.validate(target);
         
         if(constraintViolations.size() > 0) {
-            logInvalidRecord(constraintViolations);
-            this.isInvalidRecord = true;
-        }
-    }    
+            this.isInvalidRecord = true;            
+            displayLogging();
+        }        
+    }
 
-    private void logInvalidRecord(Set<ConstraintViolation<Object>> constraintViolations) {    	
+	private void displayLogging() {
+		if (enableLogging) {
+			logInvalidRecord();			
+		}
+	}    
+
+    private void logInvalidRecord() {    	
     	StringBuilder constraintMessage = new StringBuilder();        
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
             constraintMessage.append(constraintViolation.getMessage() + ", ");
@@ -45,10 +53,15 @@ public class BeanValidator implements PassThroughValidator, InitializingBean {
         LOG.info(String.format("The following record did not pass validation because %s: \n %s", constraintMessage.toString(),record.toString()));        
     }
 
+    // TODO: don't return null!
 	@Override
 	public Object passthrough(Object value) {
 		if (isInvalidRecord) {
 			return value;
 		} else return null;
-	}    
+	}
+
+	public void setEnableLogging(boolean enableLogging) {
+		this.enableLogging = enableLogging;
+	}	
 }

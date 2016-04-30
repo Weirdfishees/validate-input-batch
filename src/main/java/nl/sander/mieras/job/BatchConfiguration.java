@@ -19,6 +19,7 @@ import org.springframework.core.io.FileSystemResource;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
 import nl.sander.mieras.domain.Person;
+import nl.sander.mieras.domain.Ranking;
 import nl.sander.mieras.listener.SimpleItemReaderListener;
 import nl.sander.mieras.processor.PassThroughValidatingItemProcessor;
 import nl.sander.mieras.tokenizer.HeaderTokenizer;
@@ -64,8 +65,8 @@ public class BatchConfiguration {
         reader.setResource(getInputFile());
         reader.setLineMapper(new DefaultLineMapper() {{
             setLineTokenizer(tokenizeHeader());
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-                setTargetType(Person.class);
+            setFieldSetMapper(new BeanWrapperFieldSetMapper<Ranking>() {{
+                setTargetType(Ranking.class);
             }});
         }});       
         return reader;
@@ -91,7 +92,7 @@ public class BatchConfiguration {
     // Support Beans
 	@Bean
 	public ClassPathResource getInputFile(){
-		ClassPathResource resource = new ClassPathResource("us-500.csv");
+		ClassPathResource resource = new ClassPathResource("rankings.csv");
 		return resource;
 	}
 	
@@ -114,6 +115,7 @@ public class BatchConfiguration {
     @Bean
     public BeanValidator validator(){
     	BeanValidator validator = new BeanValidator();
+    	validator.setEnableLogging(false);
     	return validator;
     }
     
@@ -122,7 +124,7 @@ public class BatchConfiguration {
     public SimpleItemReaderListener listener(){
     	SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
     	//optional setting, custom logging is set to 1000, increase for less verbose logging
-    	listener.setLogInterval(100);
+    	listener.setLogInterval(10000);
     	return listener;
     }
 }
