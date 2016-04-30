@@ -18,9 +18,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
-import nl.sander.mieras.domain.Person;
 import nl.sander.mieras.domain.Ranking;
 import nl.sander.mieras.listener.SimpleItemReaderListener;
+import nl.sander.mieras.listener.InvalidItemStepExecutionListener;
 import nl.sander.mieras.processor.PassThroughValidatingItemProcessor;
 import nl.sander.mieras.tokenizer.HeaderTokenizer;
 import nl.sander.mieras.validator.BeanValidator;
@@ -49,9 +49,10 @@ public class BatchConfiguration {
 	    return stepBuilderFactory.get("validateInput")
 	            .chunk(100_000)	           
 	            .reader(reader())	            
-	            .listener(listener())
+	            .listener(readerListener())
 	            .processor(processor())
 	            .writer(writer())
+	            .listener(invalidItemListener())
 	            .build();
 	}
 	
@@ -115,16 +116,23 @@ public class BatchConfiguration {
     @Bean
     public BeanValidator validator(){
     	BeanValidator validator = new BeanValidator();
-    	validator.setEnableLogging(false);
+    	//optional setting, logging is disable by standard
+    	//validator.setEnableLogging(true);
     	return validator;
     }
     
     @SuppressWarnings("rawtypes")
     @Bean
-    public SimpleItemReaderListener listener(){
+    public SimpleItemReaderListener readerListener(){
     	SimpleItemReaderListener listener = new SimpleItemReaderListener<>();
     	//optional setting, custom logging is set to 1000, increase for less verbose logging
-    	listener.setLogInterval(10000);
+    	listener.setLogInterval(100000);
+    	return listener;
+    }
+    
+    @Bean
+    public InvalidItemStepExecutionListener invalidItemListener(){
+    	InvalidItemStepExecutionListener listener = new InvalidItemStepExecutionListener();
     	return listener;
     }
 }
