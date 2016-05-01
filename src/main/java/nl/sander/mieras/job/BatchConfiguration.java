@@ -9,7 +9,6 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourceArrayPropertyEditor;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
 import nl.sander.mieras.domain.Person;
@@ -34,6 +31,7 @@ import nl.sander.mieras.validator.BeanValidator;
 @EnableBatchProcessing
 public class BatchConfiguration {
 	
+	private static final String INPUT_FILE = "rankings.csv";
 	private static final String TARGET_FILE = "target/invalidRecord.csv";
 
     @Autowired
@@ -64,16 +62,7 @@ public class BatchConfiguration {
 	            .build();
 	}
 	
-	// Reader - Processor - Writer
-	/*@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Bean
-	public MultiResourceItemReader multiReader(){
-		MultiResourceItemReader reader = new MultiResourceItemReader();
-		reader.setResources(getResources("src/main/resources"));
-		reader.setDelegate(rankingReader());
-		return reader;
-	}*/
-	
+	// Reader - Processor - Writer	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean	
     public FlatFileItemReader rankingReader() {
@@ -123,18 +112,10 @@ public class BatchConfiguration {
 		return writer;
 	}    
     
-    // Support Beans
-	/*@Bean
-	public Resource[] getResources(String stagingDirectory) {
-		ResourceArrayPropertyEditor resourceLoader = new ResourceArrayPropertyEditor();
-		resourceLoader.setAsText("file:" + stagingDirectory + "/*.csv");
-		Resource[] resources = (Resource[]) resourceLoader.getValue();
-		return resources;
-	}*/
-	
+    // Support Beans	
 	@Bean
 	public ClassPathResource getInputFile(){
-		return new ClassPathResource("rankings.csv");		
+		return new ClassPathResource(INPUT_FILE);		
 	}
 	
     @Bean 
@@ -157,7 +138,7 @@ public class BatchConfiguration {
     public BeanValidator validator(){
     	BeanValidator validator = new BeanValidator();
     	//optional setting, logging is disable by standard
-    	//validator.setEnableLogging(true);
+    	validator.setEnableLogging(true);
     	return validator;
     }    
     
