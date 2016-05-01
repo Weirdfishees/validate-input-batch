@@ -18,7 +18,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import nl.sander.mieras.aggregator.HeaderAggregator;
-import nl.sander.mieras.domain.Person;
 import nl.sander.mieras.domain.Ranking;
 import nl.sander.mieras.listener.ConcreteItemProcessorListener;
 import nl.sander.mieras.listener.ConcreteItemReaderListener;
@@ -79,7 +78,7 @@ public class BatchConfiguration {
         return reader;
     }	
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/*@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean	
 	public FlatFileItemReader personReader() {
 		FlatFileItemReader reader = new FlatFileItemReader();        
@@ -93,7 +92,7 @@ public class BatchConfiguration {
 			}});
 		}});       
 		return reader;
-	}	
+	}*/	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
@@ -138,7 +137,7 @@ public class BatchConfiguration {
     public BeanValidator validator(){
     	BeanValidator validator = new BeanValidator();
     	//optional setting, logging is disable by standard
-    	validator.setEnableLogging(true);
+    	//validator.setEnableLogging(true);
     	return validator;
     }    
     
