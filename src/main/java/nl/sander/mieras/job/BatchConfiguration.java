@@ -53,7 +53,7 @@ public class BatchConfiguration {
 	public Step validateInput() {
 	    return stepBuilderFactory.get("validateInput")
 	            .chunk(100_000)	           
-	            .reader(rankingReader())	            
+	            .reader(reader())	            
 	            .listener(readerListener())
 	            .processor(processor())
 	            .listener(processorListener())
@@ -65,7 +65,7 @@ public class BatchConfiguration {
 	// Reader - Processor - Writer	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean	
-    public FlatFileItemReader rankingReader() {
+    public FlatFileItemReader reader() {
         FlatFileItemReader reader = new FlatFileItemReader();        
         reader.setLinesToSkip(1);        
         reader.setSkippedLinesCallback(tokenizeHeader());
