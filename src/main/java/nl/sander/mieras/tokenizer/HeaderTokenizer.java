@@ -2,6 +2,7 @@ package nl.sander.mieras.tokenizer;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -23,12 +24,16 @@ public class HeaderTokenizer extends DelimitedLineTokenizer implements LineCallb
 	private String[] names;	
 
 	@Override
-	public void handleLine(String line) {
+	public void handleLine(String line) {		
 		Resource resource = inputResource;
 		CSVReader reader;
 		try {
 			reader = new CSVReader(new FileReader(resource.getFile()));
-			this.names = reader.readNext();
+			String[] headerLine = reader.readNext();
+			String[] columnNames = new String[headerLine.length];
+			for (int i = 0; i < headerLine.length; i++)
+			    columnNames[i] = headerLine[i].replaceAll("\\s+","");
+			this.names = columnNames;
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}		
@@ -38,7 +43,7 @@ public class HeaderTokenizer extends DelimitedLineTokenizer implements LineCallb
 	@Override
 	protected List<String> doTokenize(String line) {
 		setNames(this.names);
-		return super.doTokenize(line);
+		return super.doTokenize(line.trim());
 	}		
 	
 	public void setDelimiter(String delimiter) {
